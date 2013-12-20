@@ -37,19 +37,21 @@ use Negotiation\Stack\Negotiation;
 $app = new Negotiation($app);
 ```
 
-### `Accept` Header
+### Headers
+
+#### `Accept` Header
 
 This middleware adds a `_accept` attribute to the request, containing a
 `AcceptHeader` object (see:
 [Negotiation](https://github.com/willdurand/Negotiation) library).
 
-### `Accept-Language` Header
+#### `Accept-Language` Header
 
 This middleware adds a `_accept_language` attribute to the request, containing a
 `AcceptHeader` object (see:
 [Negotiation](https://github.com/willdurand/Negotiation) library).
 
-### `Content-Type` Header
+#### `Content-Type` Header
 
 This middleware is able to decode a request body, and fill in request data. It
 is inspired by Silex's recipe [Accepting a JSON Request
