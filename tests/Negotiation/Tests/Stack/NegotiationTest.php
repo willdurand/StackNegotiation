@@ -45,7 +45,7 @@ class NegotiationTest extends TestCase
     {
         $app = $this->createStackedApp();
         $req = $this->createRequest($content, [
-            'Accept' => $mimeType,
+            'Content-Type' => $mimeType,
         ]);
         $req->setMethod($method);
 

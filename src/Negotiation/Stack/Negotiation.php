@@ -46,7 +46,7 @@ class Negotiation implements HttpKernelInterface
     {
         if (in_array($request->getMethod(), array('POST', 'PUT', 'PATCH', 'DELETE'))) {
             $contentType = $request->headers->get('Content-Type');
-            $format      = $this->formatNegotiator->getFormat($request->attributes->get('_accept')->getValue());
+            $format      = $this->formatNegotiator->getFormat($contentType);
             $content     = $request->getContent();
 
             if (!empty($content)) {
