@@ -28,6 +28,36 @@ The recommended way to install StackNegotiation is through
 page to choose a stable version to use, avoid the `@stable` meta constraint.
 
 
+Usage
+-----
+
+```php
+use Negotiation\Stack\Negotiation;
+
+$app = new Negotiation($app);
+```
+
+### `Accept` Header
+
+This middleware adds a `_accept` attribute to the request, containing a
+`AcceptHeader` object (see:
+[Negotiation](https://github.com/willdurand/Negotiation) library).
+
+### `Accept-Language` Header
+
+This middleware adds a `_accept_language` attribute to the request, containing a
+`AcceptHeader` object (see:
+[Negotiation](https://github.com/willdurand/Negotiation) library).
+
+### `Content-Type` Header
+
+This middleware is able to decode a request body, and fill in request data. It
+is inspired by Silex's recipe [Accepting a JSON Request
+Body](http://silex.sensiolabs.org/doc/cookbook/json_request_body.html) and
+[FOSRestBundle Body
+Listener](https://github.com/FriendsOfSymfony/FOSRestBundle/blob/master/Resources/doc/3-listener-support.md#body-listener).
+
+
 Unit Tests
 ----------
 
