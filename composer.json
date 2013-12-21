@@ -2,7 +2,8 @@
     "name": "willdurand/stack-negotiation",
     "description": "Stack middleware for content negotiation.",
     "require": {
-        "willdurand/negotiation": "~1.2"
+        "willdurand/negotiation": "~1.2",
+        "symfony/serializer": "~2.1"
     },
     "require-dev": {
         "php": ">=5.4.0",

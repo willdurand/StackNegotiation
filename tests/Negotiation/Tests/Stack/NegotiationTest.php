@@ -53,7 +53,7 @@ class NegotiationTest extends TestCase
             $app->handle($req);
         } catch (\Exception $e) {
             if (false === $expectException) {
-                $this->fail();
+                $this->fail($e);
             }
 
             $this->assertInstanceOf('Symfony\Component\HttpKernel\Exception\BadRequestHttpException', $e);
@@ -66,10 +66,11 @@ class NegotiationTest extends TestCase
     {
         return [
             [ 'POST', 'foo', 'application/json', [], true ],
-            [ 'POST', 'xml', 'application/xml', [] ],
+            [ 'POST', '<response><foo>bar</foo></response>', 'application/xml', [ 'foo' => 'bar' ] ],
             [ 'POST', '{ "foo": "bar" }', 'application/json', [ 'foo' => 'bar' ] ],
             [ 'PUT', '', 'application/json', [] ],
             [ 'GET', '{ "foo": "bar" }', 'application/json', [] ],
+            [ 'GET', '<response><foo>bar</foo></response>', 'application/xml', [] ],
         ];
     }
 

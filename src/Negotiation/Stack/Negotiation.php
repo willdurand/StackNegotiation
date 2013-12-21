@@ -5,23 +5,52 @@ namespace Negotiation\Stack;
 use Negotiation\FormatNegotiator;
 use Negotiation\LanguageNegotiator;
 use Negotiation\NegotiatorInterface;
+use Negotiation\Decoder\DecoderProvider;
+use Negotiation\Decoder\DecoderProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
 
+/**
+ * @author William Durand <william.durand1@gmail.com>
+ */
 class Negotiation implements HttpKernelInterface
 {
+    /**
+     * @var HttpKernelInterface
+     */
     private $app;
 
+    /**
+     * @var NegotiatorInterface
+     */
     private $formatNegotiator;
 
+    /**
+     * @var NegotiatorInterface
+     */
     private $languageNegotiator;
 
-    public function __construct(HttpKernelInterface $app, NegotiatorInterface $formatNegotiator = null, NegotiatorInterface $languageNegotiator = null)
-    {
+    /**
+     * @var DecoderProviderInterface
+     */
+    private $decoderProvider;
+
+    public function __construct(
+        HttpKernelInterface $app,
+        NegotiatorInterface $formatNegotiator = null,
+        NegotiatorInterface $languageNegotiator = null,
+        DecoderProviderInterface $decoderProvider = null
+    ) {
         $this->app                = $app;
         $this->formatNegotiator   = $formatNegotiator ?: new FormatNegotiator();
         $this->languageNegotiator = $languageNegotiator ?: new LanguageNegotiator();
+        $this->decoderProvider    = $decoderProvider ?: new DecoderProvider([
+            'json' => new JsonEncoder(),
+            'xml'  => new XmlEncoder(),
+        ]);
     }
 
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
@@ -44,29 +73,25 @@ class Negotiation implements HttpKernelInterface
 
     private function decodeBody(Request $request)
     {
-        if (in_array($request->getMethod(), array('POST', 'PUT', 'PATCH', 'DELETE'))) {
+        if (in_array($request->getMethod(), [ 'POST', 'PUT', 'PATCH', 'DELETE' ])) {
             $contentType = $request->headers->get('Content-Type');
             $format      = $this->formatNegotiator->getFormat($contentType);
-            $content     = $request->getContent();
+
+            if (!$this->decoderProvider->supports($format)) {
+                return;
+            }
+
+            $decoder = $this->decoderProvider->getDecoder($format);
+            $content = $request->getContent();
 
             if (!empty($content)) {
-                switch ($format) {
-                    case 'json':
-                        $data = json_decode($content, true);
-                        break;
-
-                    default:
-                        // not supported
-                        return;
-                }
+                $data = $decoder->decode($content, $format);
 
                 if (is_array($data)) {
                     $request->request->replace($data);
-
-                    return;
+                } else {
+                    throw new BadRequestHttpException('Invalid ' . $format . ' message received');
                 }
-
-                throw new BadRequestHttpException('Invalid ' . $format . ' message received');
             }
         }
     }
