@@ -85,7 +85,11 @@ class Negotiation implements HttpKernelInterface
             $content = $request->getContent();
 
             if (!empty($content)) {
-                $data = $decoder->decode($content, $format);
+                try {
+                    $data = $decoder->decode($content, $format);
+                } catch (\Exception $e) {
+                    $data = null;
+                }
 
                 if (is_array($data)) {
                     $request->request->replace($data);
