@@ -22,6 +22,7 @@ class NegotiationTest extends TestCase
         $header = $req->attributes->get('_accept');
         $this->assertInstanceOf('Negotiation\AcceptHeader', $header);
         $this->assertEquals('application/json', $header->getValue());
+        $this->assertEquals('application/json', $req->attributes->get('_mime_type'));
     }
 
     public function testAcceptLanguageHeader()
@@ -36,6 +37,7 @@ class NegotiationTest extends TestCase
         $header = $req->attributes->get('_accept_language');
         $this->assertInstanceOf('Negotiation\AcceptHeader', $header);
         $this->assertEquals('fu', $header->getValue());
+        $this->assertEquals('fu', $req->attributes->get('_language'));
     }
 
     /**
