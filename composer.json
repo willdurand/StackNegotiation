@@ -2,11 +2,11 @@
     "name": "willdurand/stack-negotiation",
     "description": "Stack middleware for content negotiation.",
     "require": {
+        "php": ">=5.4.0",
         "willdurand/negotiation": "~1.2",
         "symfony/serializer": "~2.1"
     },
     "require-dev": {
-        "php": ">=5.4.0",
         "phpunit/phpunit": "~3.7",
         "symfony/http-kernel": "~2.1"
     },
