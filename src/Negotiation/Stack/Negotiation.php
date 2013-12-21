@@ -63,6 +63,7 @@ class Negotiation implements HttpKernelInterface
 
             if (!$accept->isMediaRange()) {
                 $request->attributes->set('_mime_type', $accept->getValue());
+                $request->attributes->set('_format', $this->formatNegotiator->getFormat($accept->getValue()));
             }
         }
 
