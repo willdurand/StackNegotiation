@@ -41,23 +41,15 @@ class NegotiationTest extends TestCase
     /**
      * @dataProvider dataProviderForTestDecodeBody
      */
-    public function testDecodeBody($method, $content, $mimeType, $expected, $expectException = false)
+    public function testDecodeBody($method, $content, $mimeType, $expected)
     {
         $app = $this->createStackedApp();
         $req = $this->createRequest($content, [
             'Content-Type' => $mimeType,
-        ]);
+            ]);
         $req->setMethod($method);
 
-        try {
-            $app->handle($req);
-        } catch (\Exception $e) {
-            if (false === $expectException) {
-                $this->fail($e);
-            }
-
-            $this->assertInstanceOf('Symfony\Component\HttpKernel\Exception\BadRequestHttpException', $e);
-        }
+        $app->handle($req);
 
         $this->assertEquals($expected, $req->request->all());
     }
@@ -65,7 +57,7 @@ class NegotiationTest extends TestCase
     public function dataProviderForTestDecodeBody()
     {
         return [
-            [ 'POST', 'foo', 'application/json', [], true ],
+            [ 'POST', 'foo', 'application/json', [] ],
             [ 'POST', '<response><foo>bar</foo></response>', 'application/xml', [ 'foo' => 'bar' ] ],
             [ 'POST', '{ "foo": "bar" }', 'application/json', [ 'foo' => 'bar' ] ],
             [ 'PUT', '', 'application/json', [] ],

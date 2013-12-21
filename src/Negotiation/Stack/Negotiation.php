@@ -8,6 +8,7 @@ use Negotiation\NegotiatorInterface;
 use Negotiation\Decoder\DecoderProvider;
 use Negotiation\Decoder\DecoderProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -72,8 +73,14 @@ class Negotiation implements HttpKernelInterface
             $request->attributes->set('_language', $accept->getValue());
         }
 
-        // `Content-Type` header
-        $this->decodeBody($request);
+        try {
+            // `Content-Type` header
+            $this->decodeBody($request);
+        } catch (BadRequestHttpException $e) {
+            if (true === $catch) {
+                return new Response($e->getMessage(), Response::HTTP_BAD_REQUEST);
+            }
+        }
 
         return $this->app->handle($request, $type, $catch);
     }
