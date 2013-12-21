@@ -43,13 +43,15 @@ $app = new Negotiation($app);
 
 This middleware adds a `_accept` attribute to the request, containing a
 `AcceptHeader` object (see:
-[Negotiation](https://github.com/willdurand/Negotiation) library).
+[Negotiation](https://github.com/willdurand/Negotiation) library). It also adds
+a `_mime_type` attribute containing the mime type if it is not a media range.
 
 #### `Accept-Language` Header
 
 This middleware adds a `_accept_language` attribute to the request, containing a
 `AcceptHeader` object (see:
-[Negotiation](https://github.com/willdurand/Negotiation) library).
+[Negotiation](https://github.com/willdurand/Negotiation) library). It also adds
+a `_language` attribute containing the value itself.
 
 #### `Content-Type` Header
 
