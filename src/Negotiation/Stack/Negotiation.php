@@ -61,7 +61,7 @@ class Negotiation implements HttpKernelInterface
             $accept = $this->formatNegotiator->getBest($accept);
             $request->attributes->set('_accept', $accept);
 
-            if (!$accept->isMediaRange()) {
+            if (null !== $accept && !$accept->isMediaRange()) {
                 $request->attributes->set('_mime_type', $accept->getValue());
                 $request->attributes->set('_format', $this->formatNegotiator->getFormat($accept->getValue()));
             }
@@ -71,7 +71,10 @@ class Negotiation implements HttpKernelInterface
         if (null !== $accept = $request->headers->get('Accept-Language')) {
             $accept = $this->languageNegotiator->getBest($accept);
             $request->attributes->set('_accept_language', $accept);
-            $request->attributes->set('_language', $accept->getValue());
+
+            if (null !== $accept) {
+                $request->attributes->set('_language', $accept->getValue());
+            }
         }
 
         try {
