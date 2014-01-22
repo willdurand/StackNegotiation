@@ -49,12 +49,15 @@ class Negotiation implements HttpKernelInterface
         $this->app                = $app;
         $this->formatNegotiator   = $formatNegotiator ?: new FormatNegotiator();
         $this->languageNegotiator = $languageNegotiator ?: new LanguageNegotiator();
-        $this->decoderProvider    = $decoderProvider ?: new DecoderProvider([
+        $this->decoderProvider    = $decoderProvider ?: new DecoderProvider(array(
             'json' => new JsonEncoder(),
             'xml'  => new XmlEncoder(),
-        ]);
+        ));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {
         // `Accept` header
@@ -92,7 +95,7 @@ class Negotiation implements HttpKernelInterface
 
     private function decodeBody(Request $request)
     {
-        if (in_array($request->getMethod(), [ 'POST', 'PUT', 'PATCH', 'DELETE' ])) {
+        if (in_array($request->getMethod(), array('POST', 'PUT', 'PATCH', 'DELETE'))) {
             $contentType = $request->headers->get('Content-Type');
             $format      = $this->formatNegotiator->getFormat($contentType);
 
