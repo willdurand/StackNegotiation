@@ -3,7 +3,7 @@
     "description": "Stack middleware for content negotiation.",
     "require": {
         "php": ">=5.4.0",
-        "willdurand/negotiation": "~1.2",
+        "willdurand/negotiation": "~1.3",
         "symfony/serializer": "~2.1"
     },
     "require-dev": {

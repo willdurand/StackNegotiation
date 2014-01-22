@@ -3,6 +3,7 @@
 namespace Negotiation\Stack;
 
 use Negotiation\FormatNegotiator;
+use Negotiation\FormatNegotiatorInterface;
 use Negotiation\LanguageNegotiator;
 use Negotiation\NegotiatorInterface;
 use Negotiation\Decoder\DecoderProvider;
@@ -25,7 +26,7 @@ class Negotiation implements HttpKernelInterface
     private $app;
 
     /**
-     * @var NegotiatorInterface
+     * @var FormatNegotiatorInterface
      */
     private $formatNegotiator;
 
@@ -41,7 +42,7 @@ class Negotiation implements HttpKernelInterface
 
     public function __construct(
         HttpKernelInterface $app,
-        NegotiatorInterface $formatNegotiator = null,
+        FormatNegotiatorInterface $formatNegotiator = null,
         NegotiatorInterface $languageNegotiator = null,
         DecoderProviderInterface $decoderProvider = null
     ) {
