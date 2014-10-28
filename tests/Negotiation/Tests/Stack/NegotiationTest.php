@@ -26,6 +26,22 @@ class NegotiationTest extends TestCase
         $this->assertEquals('json', $req->attributes->get('_format'));
     }
 
+    public function testAcceptHeaderWithPriorities()
+    {
+        $app = $this->createStackedApp([], [ 'format_priorities' => [ 'json', 'xml' ] ]);
+        $req = $this->createRequest(null, [
+            'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        ]);
+
+        $app->handle($req);
+
+        $header = $req->attributes->get('_accept');
+        $this->assertInstanceOf('Negotiation\AcceptHeader', $header);
+        $this->assertEquals('application/xml', $header->getValue());
+        $this->assertEquals('application/xml', $req->attributes->get('_mime_type'));
+        $this->assertEquals('xml', $req->attributes->get('_format'));
+    }
+
     public function testAcceptLanguageHeader()
     {
         $app = $this->createStackedApp();
@@ -39,6 +55,21 @@ class NegotiationTest extends TestCase
         $this->assertInstanceOf('Negotiation\AcceptHeader', $header);
         $this->assertEquals('fu', $header->getValue());
         $this->assertEquals('fu', $req->attributes->get('_language'));
+    }
+
+    public function testAcceptLanguageHeaderWithPriorities()
+    {
+        $app = $this->createStackedApp([], [ 'language_priorities' => [ 'fr' ] ]);
+        $req = $this->createRequest(null, [
+            'Accept-Language' => 'en, fr, de',
+        ]);
+
+        $app->handle($req);
+
+        $header = $req->attributes->get('_accept_language');
+        $this->assertInstanceOf('Negotiation\AcceptHeader', $header);
+        $this->assertEquals('fr', $header->getValue());
+        $this->assertEquals('fr', $req->attributes->get('_language'));
     }
 
     /**
@@ -69,9 +100,15 @@ class NegotiationTest extends TestCase
         ];
     }
 
-    private function createStackedApp(array $responseHeaders = [])
+    private function createStackedApp(array $responseHeaders = [], array $options = [])
     {
-        return new Negotiation(new MockApp($responseHeaders));
+        return new Negotiation(
+            new MockApp($responseHeaders),
+            null,
+            null,
+            null,
+            $options
+        );
     }
 
     private function createRequest($content = null, array $requestHeaders = [])

@@ -15,17 +15,9 @@ Installation
 The recommended way to install StackNegotiation is through
 [Composer](http://getcomposer.org/):
 
-``` json
-{
-    "require": {
-        "willdurand/stack-negotiation": "@stable"
-    }
-}
+``` bash
+$ composer require "willdurand/stack-negotiation"
 ```
-
-**Protip:** you should browse the
-[`willdurand/stack-negotiation`](https://packagist.org/packages/willdurand/stack-negotiation)
-page to choose a stable version to use, avoid the `@stable` meta constraint.
 
 
 Usage
@@ -62,6 +54,16 @@ Body](http://silex.sensiolabs.org/doc/cookbook/json_request_body.html) and
 [FOSRestBundle Body
 Listener](https://github.com/FriendsOfSymfony/FOSRestBundle/blob/master/Resources/doc/3-listener-support.md#body-listener).
 
+### Options
+
+You can pass an array of _options_ to the middleware:
+
+```php
+$app = new Negotiation($app, null, null, null, [
+    'language_priorities' => [ '... '],
+    'format_priorities'   => [ '... '],
+]);
+```
 
 Unit Tests
 ----------

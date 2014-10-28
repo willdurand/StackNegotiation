@@ -40,26 +40,43 @@ class Negotiation implements HttpKernelInterface
      */
     private $decoderProvider;
 
+    /**
+     * @var array
+     */
+    private $defaultOptions = [
+        'format_priorities'   => [],
+        'language_priorities' => [],
+    ];
+
+    /**
+     * @var array
+     */
+    private $options;
+
     public function __construct(
         HttpKernelInterface $app,
         FormatNegotiatorInterface $formatNegotiator = null,
-        NegotiatorInterface $languageNegotiator = null,
-        DecoderProviderInterface $decoderProvider = null
+        NegotiatorInterface $languageNegotiator     = null,
+        DecoderProviderInterface $decoderProvider   = null,
+        array $options = []
     ) {
         $this->app                = $app;
-        $this->formatNegotiator   = $formatNegotiator ?: new FormatNegotiator();
+        $this->formatNegotiator   = $formatNegotiator   ?: new FormatNegotiator();
         $this->languageNegotiator = $languageNegotiator ?: new LanguageNegotiator();
-        $this->decoderProvider    = $decoderProvider ?: new DecoderProvider([
+        $this->decoderProvider    = $decoderProvider    ?: new DecoderProvider([
             'json' => new JsonEncoder(),
             'xml'  => new XmlEncoder(),
         ]);
+        $this->options = array_merge($this->defaultOptions, $options);
     }
 
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {
         // `Accept` header
         if (null !== $accept = $request->headers->get('Accept')) {
-            $accept = $this->formatNegotiator->getBest($accept);
+            $priorities = $this->formatNegotiator->normalizePriorities($this->options['format_priorities']);
+            $accept     = $this->formatNegotiator->getBest($accept, $priorities);
+
             $request->attributes->set('_accept', $accept);
 
             if (null !== $accept && !$accept->isMediaRange()) {
@@ -70,7 +87,7 @@ class Negotiation implements HttpKernelInterface
 
         // `Accept-Language` header
         if (null !== $accept = $request->headers->get('Accept-Language')) {
-            $accept = $this->languageNegotiator->getBest($accept);
+            $accept = $this->languageNegotiator->getBest($accept, $this->options['language_priorities']);
             $request->attributes->set('_accept_language', $accept);
 
             if (null !== $accept) {
