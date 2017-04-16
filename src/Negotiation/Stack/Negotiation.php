@@ -43,10 +43,10 @@ class Negotiation implements HttpKernelInterface
     /**
      * @var array
      */
-    private $defaultOptions = [
-        'format_priorities'   => [],
-        'language_priorities' => [],
-    ];
+    private $defaultOptions = array(
+        'format_priorities'   => array(),
+        'language_priorities' => array(),
+    );
 
     /**
      * @var array
@@ -58,15 +58,15 @@ class Negotiation implements HttpKernelInterface
         FormatNegotiatorInterface $formatNegotiator = null,
         NegotiatorInterface $languageNegotiator     = null,
         DecoderProviderInterface $decoderProvider   = null,
-        array $options = []
+        array $options = array()
     ) {
         $this->app                = $app;
         $this->formatNegotiator   = $formatNegotiator   ?: new FormatNegotiator();
         $this->languageNegotiator = $languageNegotiator ?: new LanguageNegotiator();
-        $this->decoderProvider    = $decoderProvider    ?: new DecoderProvider([
+        $this->decoderProvider    = $decoderProvider    ?: new DecoderProvider(array(
             'json' => new JsonEncoder(),
             'xml'  => new XmlEncoder(),
-        ]);
+        ));
         $this->options = array_merge($this->defaultOptions, $options);
     }
 
@@ -109,7 +109,7 @@ class Negotiation implements HttpKernelInterface
 
     private function decodeBody(Request $request)
     {
-        if (in_array($request->getMethod(), [ 'POST', 'PUT', 'PATCH', 'DELETE' ])) {
+        if (in_array($request->getMethod(), array('POST', 'PUT', 'PATCH', 'DELETE'))) {
             $contentType = $request->headers->get('Content-Type');
             $format      = $this->formatNegotiator->getFormat($contentType);
 
